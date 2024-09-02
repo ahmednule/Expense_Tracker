@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usage Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    #usageChart {
+      max-width: 600px;
+      margin: auto;
+    }
+    #expenseList {
+      max-width: 600px;
+      margin: 20px auto;
+      list-style-type: none;
+      padding: 0;
+    }
+    #expenseList li {
+      padding: 10px;
+      background-color: #f8f9fa;
+      margin-bottom: 10px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Usage Tracker</h1>
+    <form id="usageForm" action="/dashboard" method="POST">
+      <div class="mb-3">
+        <label for="initialAmount" class="form-label">Initial Amount (e.g., Salary):</label>
+        <input type="number" class="form-control" id="initialAmount" name="initialamount" required>
+      </div>
+      <div class="mb-3">
+        <label for="expenseDescription" class="form-label">Expense Description:</label>
+        <input type="text" class="form-control" id="expenseDescription" name="description" required>
+      </div>
+      <div class="mb-3">
+        <label for="usedAmount" class="form-label">Expense Amount:</label>
+        <input type="number" class="form-control" id="usedAmount" name="amount" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Add Expense</button>
+    </form>
+
+    <div id="chartContainer" class="mt-5" style="display: none;">
+      <canvas id="usageChart"></canvas>
+    </div>
+
+    <ul id="expenseList"></ul>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    let usageChart;
+    let initialAmount = 0;
+    let totalUsed = 0;
+    const expenseList = document.getElementById('expenseList');
+
+    document.getElementById('usageForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const inputInitialAmount = parseFloat(document.getElementById('initialAmount').value);
+      const expenseDescription = document.getElementById('expenseDescription').value;
+      const usedAmount = parseFloat(document.getElementById('usedAmount').value);
+
+      if (initialAmount === 0) {
+        initialAmount = inputInitialAmount;
+        totalUsed = 0;
+        document.getElementById('initialAmount').disabled = true;
+        document.getElementById('chartContainer').style.display = 'block';
+      }
+
+      if (usedAmount + totalUsed > initialAmount) {
+        alert('Out of funds!');
+        return;
+      }
+
+      totalUsed += usedAmount;
+      const remainingAmount = initialAmount - totalUsed;
+
+      // Add expense to the list
+      const listItem = document.createElement('li');
+      listItem.textContent = `${expenseDescription}: $${usedAmount.toFixed(2)}`;
+      expenseList.appendChild(listItem);
+
+      const data = {
+        labels: ['Used', 'Remaining'],
+        datasets: [{
+          data: [totalUsed, remainingAmount],
+          backgroundColor: ['#FF6384', '#36A2EB'],
+          hoverOffset: 4
+        }]
+      };
+
+      if (usageChart) {
+        usageChart.destroy();
+      }
+
+      usageChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Usage Overview'
+            }
+          }
+        }
+      });
+
+      // Clear the expense description and amount fields
+      document.getElementById('expenseDescription').value = '';
+      document.getElementById('usedAmount').value = '';
+    });
+  </script>
+</body>
+</html>

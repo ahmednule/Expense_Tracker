@@ -1,0 +1,22 @@
+{
+  "name": "final_part",
+  "version": "1.0.0",
+  "description": "In this week, you will integrate the frontend and backend components of the Expense Tracker Application using Node.js for the backend and HTML, CSS, and JavaScript for the frontend. You will implement user authentication on the backend and create API endpoints to retrieve and display data on the frontend. This will provide hands-on experience with full-stack development, integrating frontend with backend APIs, and managing user sessions securely.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
+  }
+}
